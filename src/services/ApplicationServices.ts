@@ -6,8 +6,8 @@ export const applicationKeys = {
   all: ["applications"] as const,
   lists: () => [...applicationKeys.all, "list"] as const,
   list: (filters: string) => [...applicationKeys.lists(), { filters }] as const,
-  individuals: () => [...applicationKeys.all, "individual"] as const,
-  individual: (id: string) => [...applicationKeys.individuals(), id] as const,
+  details: () => [...applicationKeys.all, "detail"] as const,
+  detail: (id: string) => [...applicationKeys.details(), id] as const,
 };
 
 // methods are CRRUD or Create, Read all, Read by id, update, delete, followed by specialized apis

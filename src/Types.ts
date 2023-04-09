@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 const BaseSchema = z.object({
-  id: z.number(),
+  // TODO: only need this for new entities
+  id: z.number().default(-1),
 });
 
 export const ApplicationSummarySchema = z
