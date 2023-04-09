@@ -77,6 +77,11 @@
     @apply px-6 py-4 text-4xl;
   }
 
+  .secondary-btn-danger {
+    @apply border-red-500 text-red-500;
+  }
+
+  /* Layout customizations */
   .container {
     @apply mb-24;
   }
