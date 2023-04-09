@@ -7,17 +7,18 @@ import {
   applicationKeys,
   createApplication,
 } from "../../services/ApplicationServices";
+import { Application, ApplicationSummarySchema } from "../../Types";
 
 ///
 // schema
-const newApplicationSchema = z.object({
-  name: z.string().min(2).max(100),
-  description: z.string().min(10).max(500),
-  //waiting on: https://github.com/colinhacks/zod/issues/310
-  repositoryUrl: z.string().url().optional().or(z.literal("")),
-});
+// const newApplicationSchema = z.object({
+//   name: z.string().min(2).max(100),
+//   description: z.string().min(10).max(500),
+//   //waiting on: https://github.com/colinhacks/zod/issues/310
+//   repositoryUrl: z.string().url().optional().or(z.literal("")),
+// });
 
-export type NewApplicationSchemaType = z.infer<typeof newApplicationSchema>;
+// export type NewApplicationSchemaType = z.infer<typeof newApplicationSchema>;
 
 const ApplicationNew = () => {
   const navigate = useNavigate();
@@ -31,8 +32,8 @@ const ApplicationNew = () => {
     formState: { errors, isSubmitting },
     control,
     // control,
-  } = useForm<NewApplicationSchemaType>({
-    resolver: zodResolver(newApplicationSchema),
+  } = useForm<Application>({
+    resolver: zodResolver(ApplicationSummarySchema),
   });
 
   ///
@@ -49,7 +50,7 @@ const ApplicationNew = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<NewApplicationSchemaType> = (formData) => {
+  const onSubmit: SubmitHandler<Application> = (formData) => {
     createApplicationMutator(formData);
   };
 

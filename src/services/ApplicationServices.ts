@@ -1,5 +1,5 @@
 import { Application, ApplicationSummary } from "../Types";
-import { NewApplicationSchemaType } from "../pages/application/ApplicationNewPage";
+
 import { backendApi } from "./BackendApi";
 
 export const applicationKeys = {
@@ -12,8 +12,8 @@ export const applicationKeys = {
 
 // methods are CRRUD or Create, Read all, Read by id, update, delete, followed by specialized apis
 export const createApplication = async (
-  application: NewApplicationSchemaType
-): Promise<NewApplicationSchemaType> => {
+  application: Application
+): Promise<Application> => {
   console.log("Creating application");
   const response = await backendApi.post<Application>(
     "/applications",

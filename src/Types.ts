@@ -1,11 +1,18 @@
-interface Base {
-  id: number;
-}
+import { z } from "zod";
 
-export interface ApplicationSummary extends Base {
-  name: string;
-  description: string;
-  repositoryUrl: string;
-}
+const BaseSchema = z.object({
+  id: z.number(),
+});
 
-export type Application = ApplicationSummary;
+export const ApplicationSummarySchema = z.object({
+  name: z.string().min(2).max(100),
+  description: z.string().min(10).max(500),
+  //waiting on: https://github.com/colinhacks/zod/issues/310
+  repositoryUrl: z.string().url().optional().or(z.literal("")),
+});
+
+const ApplicationSummary = ApplicationSummarySchema.merge(BaseSchema);
+export type ApplicationSummary = z.infer<typeof ApplicationSummary>;
+
+const ApplicationSchema = ApplicationSummary;
+export type Application = z.infer<typeof ApplicationSchema>;
