@@ -1,18 +1,30 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
+import {
+  applicationKeys,
+  createApplication,
+} from "../../services/ApplicationServices";
+
+///
+// schema
+const newApplicationSchema = z.object({
+  name: z.string().min(2).max(100),
+  description: z.string().min(10).max(500),
+  //waiting on: https://github.com/colinhacks/zod/issues/310
+  repositoryUrl: z.string().url().optional().or(z.literal("")),
+});
+
+export type NewApplicationSchemaType = z.infer<typeof newApplicationSchema>;
 
 const ApplicationNew = () => {
-  const newApplicationSchema = z.object({
-    name: z.string().min(2).max(100),
-    description: z.string().min(10).max(500),
-    //waiting on: https://github.com/colinhacks/zod/issues/310
-    repository: z.string().url().optional().or(z.literal("")),
-  });
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  type NewApplicationSchemaType = z.infer<typeof newApplicationSchema>;
-
+  ///
+  // react hook form wired up
   const {
     register,
     handleSubmit,
@@ -23,8 +35,22 @@ const ApplicationNew = () => {
     resolver: zodResolver(newApplicationSchema),
   });
 
+  ///
+  // mutation via tanstack query
+  const { mutate: createApplicationMutator } = useMutation({
+    mutationFn: createApplication,
+    onSuccess: () => {
+      queryClient.invalidateQueries(applicationKeys.lists());
+      navigate(-1);
+    },
+    onError: () => {
+      // TODO: finish validation
+      alert("error!");
+    },
+  });
+
   const onSubmit: SubmitHandler<NewApplicationSchemaType> = (formData) => {
-    console.log(formData);
+    createApplicationMutator(formData);
   };
 
   const descriptionWatch = useWatch({ control, name: "description" });
@@ -67,9 +93,11 @@ const ApplicationNew = () => {
           <label htmlFor="repository">
             Repository <small>(optional)</small>
           </label>
-          <input type="text" id="repository" {...register("repository")} />
-          {errors.repository && (
-            <span className="validation-text">{errors.repository.message}</span>
+          <input type="text" id="repository" {...register("repositoryUrl")} />
+          {errors.repositoryUrl && (
+            <span className="validation-text">
+              {errors.repositoryUrl.message}
+            </span>
           )}
         </div>
 

@@ -1,12 +1,26 @@
 import { DebounceInput } from "react-debounce-input";
-import ApplicationCard from "../../components/application/ApplicationCard";
+import ApplicationCard from "../../components/application/ApplicationSummaryCard";
 import { Link } from "react-router-dom";
 import { BsPlus } from "react-icons/bs";
+import { useQuery } from "@tanstack/react-query";
+import {
+  applicationKeys,
+  readAllApplications,
+} from "../../services/ApplicationServices";
+import LoadingScreen from "../../components/navigation/LoadingScreen";
 
 const ApplicationList = () => {
   const search = () => {
     console.log("searching");
   };
+
+  const {
+    data: applicationSummaries,
+    isError,
+    isLoading,
+    refetch,
+  } = useQuery(applicationKeys.lists(), () => readAllApplications());
+
   return (
     <div className="app-list container">
       <div className="title-bar sticky top-24 bg-slate-400 p-2">
@@ -26,16 +40,28 @@ const ApplicationList = () => {
         />
       </div>
       <div id="app-container" className="grid gap-3 p-4 lg:grid-cols-2">
-        <ApplicationCard />
-        <ApplicationCard />
-        <ApplicationCard />
-        <ApplicationCard />
-        <ApplicationCard />
-        <ApplicationCard />
-        <ApplicationCard />
-        <ApplicationCard />
-        <ApplicationCard />
-        <ApplicationCard />
+        {(isLoading || isError) && (
+          <LoadingScreen
+            isLoading={isLoading}
+            isError={isError}
+            refetch={refetch}
+          />
+        )}
+
+        {!isLoading && applicationSummaries?.length === 0 && (
+          <h4>No results found</h4>
+        )}
+
+        {!isLoading && (
+          <>
+            {applicationSummaries?.map((applicationSummary) => (
+              <ApplicationCard
+                key={applicationSummary.id}
+                applicationSummary={applicationSummary}
+              />
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
