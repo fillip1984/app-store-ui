@@ -7,6 +7,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import LoadingScreen from "../../components/navigation/LoadingScreen";
 
+import { MdEdit } from "react-icons/md";
+
 const ApplicationDetail = () => {
   const { id } = useParams();
   const applicationId = Number(id);
@@ -38,6 +40,10 @@ const ApplicationDetail = () => {
     }
   );
 
+  const handleEditBasics = () => {
+    console.log("editing basics");
+  };
+
   return (
     <div className="container">
       {(isLoading || isError) && (
@@ -50,7 +56,7 @@ const ApplicationDetail = () => {
 
       {!isLoading && !isError && (
         <>
-          <div className="my-2 flex gap-2">
+          <div className="my-2 flex justify-end gap-2 rounded bg-slate-100 p-2">
             <button
               type="button"
               className="secondary-btn secondary-btn-danger"
@@ -58,9 +64,16 @@ const ApplicationDetail = () => {
               Delete
             </button>
           </div>
-          <h2>{application?.name}</h2>
 
-          <p className="mt-4">{application?.description}</p>
+          <div>
+            <div className="flex items-center justify-between">
+              <h2>{application?.name}</h2>
+              <button onClick={handleEditBasics}>
+                <MdEdit className="text-4xl" />
+              </button>
+            </div>
+            <p className="mt-4">{application?.description}</p>
+          </div>
         </>
       )}
     </div>

@@ -101,6 +101,46 @@ const ApplicationNew = () => {
           )}
         </div>
 
+        <div className="flex flex-col gap-x-2 md:flex-row">
+          <div className="input-group flex-1">
+            <label>Status</label>
+            <select>
+              <option value="">&lt;None Selected&gt;</option>
+              <option>In progress</option>
+            </select>
+          </div>
+
+          <div className="input-group flex-1">
+            <label>Category</label>
+            <select>
+              <option value="">&lt;None Selected&gt;</option>
+              <option>Knowledge</option>
+              <option>Productivity</option>
+              <option>Tooling</option>
+              <option>Tutorial</option>
+              <option>Experimental</option>
+            </select>
+          </div>
+        </div>
+
+        {/* <div className="flex flex-col gap-x-2 md:flex-row">
+          <div className="input-group flex-1">
+            <label>Platform</label>
+            <select>
+              <option value="">&lt;None Selected&gt;</option>
+              <option>Frontend - Vite</option>
+              <option>Backend - Spring Boot</option>
+            </select>
+          </div>
+
+          <div className="input-group flex-1">
+            <label>Category</label>
+            <select>
+              <option value="">&lt;None Selected&gt;</option>
+            </select>
+          </div>
+        </div> */}
+
         <div className="mt-4 flex gap-3">
           <button type="submit" className="primary-btn" disabled={isSubmitting}>
             Save
