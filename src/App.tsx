@@ -4,7 +4,6 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Nav from "./components/navigation/TopNav";
 import ApplicationDetail from "./pages/application/ApplicationDetailPage";
 import ApplicationList from "./pages/application/ApplicationListPage";
-import ApplicationNew from "./pages/application/ApplicationNewPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,7 +23,6 @@ const App = () => {
           <Routes>
             <Route path="/" element={<ApplicationList />} />
             <Route path="/applications" element={<ApplicationList />} />
-            <Route path="/applications/new" element={<ApplicationNew />} />
             <Route path="/applications/:id" element={<ApplicationDetail />} />
           </Routes>
         </Router>

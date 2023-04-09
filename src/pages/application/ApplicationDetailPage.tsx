@@ -1,31 +1,65 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Application, ApplicationSummarySchema, isNew } from "../../Types";
 import {
   applicationKeys,
+  createApplication,
   deleteApplicationById,
   readApplicationById,
+  updateApplication,
 } from "../../services/ApplicationServices";
-import { useNavigate, useParams } from "react-router-dom";
 import LoadingScreen from "../../components/navigation/LoadingScreen";
+import { useEffect } from "react";
 
-import { MdEdit } from "react-icons/md";
+///
+// schema
+// const newApplicationSchema = z.object({
+//   name: z.string().min(2).max(100),
+//   description: z.string().min(10).max(500),
+//   //waiting on: https://github.com/colinhacks/zod/issues/310
+//   repositoryUrl: z.string().url().optional().or(z.literal("")),
+// });
 
-const ApplicationDetail = () => {
-  const { id } = useParams();
-  const applicationId = Number(id);
+// export type NewApplicationSchemaType = z.infer<typeof newApplicationSchema>;
 
+const ApplicationDetailPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const { id } = useParams();
+  const applicationId = Number(id);
+
+  // retrieves existing entity or builds out one. The result is then reset into react hook form
   const {
     data: application,
     isLoading,
+    isFetching,
     isError,
     refetch,
   } = useQuery({
     queryKey: applicationKeys.detail(applicationId),
-    queryFn: () => readApplicationById(applicationId),
-    refetchOnWindowFocus: false,
+    queryFn: () => {
+      if (isNew(id)) {
+        return {
+          name: "",
+          description: "",
+        } as Application;
+      } else {
+        return readApplicationById(applicationId);
+      }
+    },
+    enabled: !!id, //wait until react router dom finishes retrieving id (will either be 'new' or a number)
+    refetchOnWindowFocus: false, // if a user clicks off of the form and returns the data will be refetched and updates reset unless we disable this
   });
+
+  // forces react hook form to reset once we have existing form data
+  useEffect(() => {
+    if (!isFetching) {
+      reset(application);
+    }
+  }, [isFetching]);
 
   const { mutate: deleteApplicationByIdMutator } = useMutation(
     deleteApplicationById,
@@ -40,9 +74,54 @@ const ApplicationDetail = () => {
     }
   );
 
-  const handleEditBasics = () => {
-    console.log("editing basics");
+  ///
+  // react hook form wired up
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    control,
+    reset,
+  } = useForm<Application>({
+    resolver: zodResolver(ApplicationSummarySchema),
+  });
+
+  ///
+  // mutation via tanstack query
+  const { mutate: createApplicationMutator } = useMutation({
+    mutationFn: createApplication,
+    onSuccess: () => {
+      queryClient.invalidateQueries(applicationKeys.lists());
+      navigate(-1);
+    },
+    onError: () => {
+      // TODO: finish validation
+      alert("error!");
+    },
+  });
+
+  const { mutate: updateApplicationMutator } = useMutation({
+    mutationFn: updateApplication,
+    onSuccess: () => {
+      queryClient.invalidateQueries(applicationKeys.lists());
+      queryClient.invalidateQueries(applicationKeys.detail(Number(id)));
+      navigate(-1);
+    },
+    onError: () => {
+      // TODO: finish validation
+      alert("error!");
+    },
+  });
+
+  const onSubmit: SubmitHandler<Application> = (formData) => {
+    if (isNew(id)) {
+      createApplicationMutator(formData);
+    } else {
+      updateApplicationMutator(formData);
+    }
   };
+
+  const descriptionWatch = useWatch({ control, name: "description" });
 
   return (
     <div className="container">
@@ -54,30 +133,107 @@ const ApplicationDetail = () => {
         />
       )}
 
-      {!isLoading && !isError && (
-        <>
-          <div className="my-2 flex justify-end gap-2 rounded bg-slate-100 p-2">
-            <button
-              type="button"
-              className="secondary-btn secondary-btn-danger"
-              onClick={() => deleteApplicationByIdMutator(application.id)}>
-              Delete
-            </button>
+      <h2 className="my-2">New Application</h2>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="input-group">
+          <label htmlFor="name">Name</label>
+          <input type="text" id="name" {...register("name")} autoFocus />
+          {errors.name && (
+            <span className="validation-text">{errors.name.message}</span>
+          )}
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="description">Description</label>
+          <div className="relative">
+            <textarea id="description" {...register("description")} rows={10} />
+            {/* counter to show how many characters have been typed and how many remain before being invalid */}
+            {/* TODO: figure out how to retrieve the description.max() value so we don't have to hard code 500 here */}
+            {descriptionWatch && (
+              <span
+                className={`absolute bottom-2 right-2 ${
+                  descriptionWatch.length > 500 ? "text-red-400" : ""
+                }`}>
+                {descriptionWatch.length}/500
+              </span>
+            )}
+          </div>
+          {errors.description && (
+            <span className="validation-text">
+              {errors.description.message}
+            </span>
+          )}
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="repository">
+            Repository <small>(optional)</small>
+          </label>
+          <input type="text" id="repository" {...register("repositoryUrl")} />
+          {errors.repositoryUrl && (
+            <span className="validation-text">
+              {errors.repositoryUrl.message}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-x-2 md:flex-row">
+          <div className="input-group flex-1">
+            <label>Status</label>
+            <select>
+              <option value="">&lt;None Selected&gt;</option>
+              <option>In progress</option>
+            </select>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between">
-              <h2>{application?.name}</h2>
-              <button onClick={handleEditBasics}>
-                <MdEdit className="text-4xl" />
-              </button>
-            </div>
-            <p className="mt-4">{application?.description}</p>
+          <div className="input-group flex-1">
+            <label>Category</label>
+            <select>
+              <option value="">&lt;None Selected&gt;</option>
+              <option>Knowledge</option>
+              <option>Productivity</option>
+              <option>Tooling</option>
+              <option>Tutorial</option>
+              <option>Experimental</option>
+            </select>
           </div>
-        </>
-      )}
+        </div>
+
+        {/* <div className="flex flex-col gap-x-2 md:flex-row">
+          <div className="input-group flex-1">
+            <label>Platform</label>
+            <select>
+              <option value="">&lt;None Selected&gt;</option>
+              <option>Frontend - Vite</option>
+              <option>Backend - Spring Boot</option>
+            </select>
+          </div>
+
+          <div className="input-group flex-1">
+            <label>Category</label>
+            <select>
+              <option value="">&lt;None Selected&gt;</option>
+            </select>
+          </div>
+        </div> */}
+
+        <div className="mt-4 flex gap-3">
+          <button type="submit" className="primary-btn" disabled={isSubmitting}>
+            Save
+          </button>
+          <Link to="/applications" className="secondary-btn">
+            Cancel
+          </Link>
+          <button
+            type="button"
+            className="secondary-btn-danger secondary-btn"
+            onClick={() => deleteApplicationByIdMutator(applicationId)}>
+            Delete
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
 
-export default ApplicationDetail;
+export default ApplicationDetailPage;

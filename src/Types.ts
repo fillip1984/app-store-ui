@@ -17,3 +17,7 @@ export type ApplicationSummary = z.infer<typeof ApplicationSummarySchema>;
 
 const ApplicationSchema = ApplicationSummarySchema;
 export type Application = z.infer<typeof ApplicationSchema>;
+
+export const isNew = (id: number | string | undefined) => {
+  return id === "new";
+};
