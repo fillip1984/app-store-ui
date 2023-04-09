@@ -18,7 +18,7 @@ const ApplicationSummaryCard = ({
 
   const prefetch = async (id: number) => {
     await queryClient.prefetchQuery({
-      queryKey: applicationKeys.detail(id.toString()),
+      queryKey: applicationKeys.detail(id),
       queryFn: () => readApplicationById(id),
       staleTime: 10 * 1000, // only prefetch if older than 10 seconds
     });
@@ -26,7 +26,7 @@ const ApplicationSummaryCard = ({
 
   return (
     <Link
-      to={`/applications/id`}
+      to={`/applications/${applicationSummary.id}`}
       className="h-56 w-full rounded border bg-slate-50 p-2 transition duration-200 hover:shadow-md hover:shadow-sky-400"
       onMouseEnter={() => prefetch(applicationSummary.id)}>
       <div className="app-card flex h-full flex-col">

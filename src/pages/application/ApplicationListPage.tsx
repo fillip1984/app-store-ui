@@ -39,20 +39,23 @@ const ApplicationList = () => {
           autoFocus
         />
       </div>
-      <div id="app-container" className="grid gap-3 p-4 lg:grid-cols-2">
-        {(isLoading || isError) && (
-          <LoadingScreen
-            isLoading={isLoading}
-            isError={isError}
-            refetch={refetch}
-          />
-        )}
 
-        {!isLoading && applicationSummaries?.length === 0 && (
+      {(isLoading || isError) && (
+        <LoadingScreen
+          isLoading={isLoading}
+          isError={isError}
+          refetch={refetch}
+        />
+      )}
+
+      {!isLoading && applicationSummaries?.length === 0 && (
+        <div className="my-24 flex items-center justify-center">
           <h4>No results found</h4>
-        )}
+        </div>
+      )}
 
-        {!isLoading && (
+      {!isLoading && (
+        <div id="app-container" className="grid gap-3 p-4 lg:grid-cols-2">
           <>
             {applicationSummaries?.map((applicationSummary) => (
               <ApplicationCard
@@ -61,8 +64,8 @@ const ApplicationList = () => {
               />
             ))}
           </>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

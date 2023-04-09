@@ -72,4 +72,12 @@
   .secondary-btn {
     @apply rounded border-2 border-sky-500 px-4 py-2 text-2xl text-sky-500;
   }
+
+  .btn-lg {
+    @apply px-6 py-4 text-4xl;
+  }
+
+  .container {
+    @apply mb-24;
+  }
 }
