@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+  /* Heading customizations */
   h1 {
     @apply text-8xl;
   }
@@ -21,5 +22,54 @@
 
   h5 {
     @apply text-xl;
+  }
+
+  /* Form input customizations */
+  .input-group {
+    @apply mt-4 flex flex-col;
+  }
+
+  [type="text"],
+  [type="email"],
+  [type="url"],
+  [type="password"],
+  [type="number"],
+  [type="date"],
+  [type="datetime-local"],
+  [type="month"],
+  [type="search"],
+  [type="tel"],
+  [type="time"],
+  [type="week"],
+  [multiple],
+  textarea,
+  select {
+    @apply w-full rounded-lg border-2 border-gray-300 focus:border-sky-400 focus:ring-sky-400;
+  }
+
+  /* Textarea had an inconsistent spacing between itself and the validation-text element */
+  textarea {
+    @apply -mb-1;
+  }
+
+  .validation-text {
+    @apply text-red-500;
+  }
+
+  label {
+    @apply text-2xl;
+  }
+
+  small {
+    @apply text-gray-400;
+  }
+
+  /* Button customizations */
+  .primary-btn {
+    @apply rounded bg-sky-500 px-4 py-2 text-2xl text-white;
+  }
+
+  .secondary-btn {
+    @apply rounded border-2 border-sky-500 px-4 py-2 text-2xl text-sky-500;
   }
 }

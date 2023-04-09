@@ -1,116 +1,83 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { Application } from "../../services/Types";
 import { Link } from "react-router-dom";
+import { z } from "zod";
 
 const ApplicationNew = () => {
+  const newApplicationSchema = z.object({
+    name: z.string().min(2).max(100),
+    description: z.string().min(10).max(500),
+    //waiting on: https://github.com/colinhacks/zod/issues/310
+    repository: z.string().url().optional().or(z.literal("")),
+  });
+
+  type NewApplicationSchemaType = z.infer<typeof newApplicationSchema>;
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     control,
-  } = useForm<Application>({
-    defaultValues: {
-      name: "",
-      description: "",
-      repository: "",
-    },
+    // control,
+  } = useForm<NewApplicationSchemaType>({
+    resolver: zodResolver(newApplicationSchema),
   });
 
-  const onSubmit: SubmitHandler<Application> = (formData) => {
+  const onSubmit: SubmitHandler<NewApplicationSchemaType> = (formData) => {
     console.log(formData);
   };
 
   const descriptionWatch = useWatch({ control, name: "description" });
 
   return (
-    <div className="container mx-auto">
-      <h2>New Application</h2>
+    <div className="container">
+      <h2 className="my-2">New Application</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col">
-          <label className="text-2xl">Name</label>
-          <input
-            type="text"
-            {...register("name", {
-              required: { value: true, message: "Field is required" },
-              minLength: {
-                value: 2,
-                message: "Field must be between 2 and 100 characters",
-              },
-              maxLength: {
-                value: 100,
-                message: "Field must be between 2 and 100 characters",
-              },
-            })}
-            className="w-full rounded"
-            autoFocus
-          />
+        <div className="input-group">
+          <label htmlFor="name">Name</label>
+          <input type="text" id="name" {...register("name")} autoFocus />
           {errors.name && (
-            <span className="text-red-400">{errors.name.message}</span>
+            <span className="validation-text">{errors.name.message}</span>
           )}
         </div>
 
-        <div className="flex flex-col">
-          <label className="text-2xl">Description</label>
+        <div className="input-group">
+          <label htmlFor="description">Description</label>
           <div className="relative">
-            <textarea
-              {...register("description", {
-                required: { value: true, message: "Field is required" },
-                minLength: {
-                  value: 10,
-                  message: "Field must be between 10 and 500 characters",
-                },
-                maxLength: {
-                  value: 500,
-                  message: "Field must be between 10 and 500 characters",
-                },
-              })}
-              className="w-full rounded"
-              rows={10}
-            />
-            <span
-              className={`absolute bottom-2 right-2 ${
-                descriptionWatch.length > 500 ? "text-red-400" : ""
-              }`}>
-              {descriptionWatch.length}/500
-            </span>
+            <textarea id="description" {...register("description")} rows={10} />
+            {/* counter to show how many characters have been typed and how many remain before being invalid */}
+            {/* TODO: figure out how to retrieve the description.max() value so we don't have to hard code 500 here */}
+            {descriptionWatch && (
+              <span
+                className={`absolute bottom-2 right-2 ${
+                  descriptionWatch.length > 500 ? "text-red-400" : ""
+                }`}>
+                {descriptionWatch.length}/500
+              </span>
+            )}
           </div>
           {errors.description && (
-            <span className="text-red-400">{errors.description.message}</span>
+            <span className="validation-text">
+              {errors.description.message}
+            </span>
           )}
         </div>
 
-        <div className="flex flex-col">
-          <label className="text-2xl">Repository</label>
-          <input
-            type="text"
-            {...register("repository", {
-              required: { value: true, message: "Field is required" },
-              minLength: {
-                value: 2,
-                message: "Field must be between 2 and 100 characters",
-              },
-              maxLength: {
-                value: 100,
-                message: "Field must be between 2 and 100 characters",
-              },
-            })}
-            className="w-full rounded"
-            autoFocus
-          />
-          {errors.name && (
-            <span className="text-red-400">{errors.name.message}</span>
+        <div className="input-group">
+          <label htmlFor="repository">
+            Repository <small>(optional)</small>
+          </label>
+          <input type="text" id="repository" {...register("repository")} />
+          {errors.repository && (
+            <span className="validation-text">{errors.repository.message}</span>
           )}
         </div>
 
         <div className="mt-4 flex gap-3">
-          <button
-            type="submit"
-            className="rounded bg-sky-600 px-4 py-2 text-2xl text-white">
+          <button type="submit" className="primary-btn" disabled={isSubmitting}>
             Save
           </button>
-          <Link
-            to="/applications"
-            className="rounded border-2 border-sky-600 px-4 py-2 text-2xl text-sky-600">
+          <Link to="/applications" className="secondary-btn">
             Cancel
           </Link>
         </div>
