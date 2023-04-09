@@ -8,7 +8,7 @@ const ApplicationList = () => {
     console.log("searching");
   };
   return (
-    <div className="app-list mx-auto w-11/12 pb-24 lg:w-3/4">
+    <div className="app-list container">
       <div className="title-bar sticky top-24 bg-slate-400 p-2">
         <div className="flex items-center gap-4">
           <h2 className="text-white">Applications</h2>
