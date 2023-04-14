@@ -2,7 +2,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Application, ApplicationSummarySchema, isNew } from "../../Types";
+import {
+  Application,
+  ApplicationSummarySchema,
+  CategoryOptions,
+  StatusOptions,
+  isNew,
+} from "../../Types";
 import {
   applicationKeys,
   createApplication,
@@ -45,6 +51,8 @@ const ApplicationDetailPage = () => {
         return {
           name: "",
           description: "",
+          status: StatusOptions.Enum.Backlog,
+          category: CategoryOptions.Enum.Uncategorized,
         } as Application;
       } else {
         return readApplicationById(applicationId);
@@ -179,23 +187,31 @@ const ApplicationDetailPage = () => {
 
         <div className="flex flex-col gap-x-2 md:flex-row">
           <div className="input-group flex-1">
-            <label>Status</label>
-            <select>
-              <option value="">&lt;None Selected&gt;</option>
-              <option>In progress</option>
+            <label htmlFor="status">Status</label>
+            <select id="status" {...register("status")}>
+              {StatusOptions.options.map((statusOption) => (
+                <option key={statusOption} value={statusOption}>
+                  {statusOption}
+                </option>
+              ))}
             </select>
+            {errors.status && (
+              <span className="validation-text">{errors.status.message}</span>
+            )}
           </div>
 
           <div className="input-group flex-1">
-            <label>Category</label>
-            <select>
-              <option value="">&lt;None Selected&gt;</option>
-              <option>Knowledge</option>
-              <option>Productivity</option>
-              <option>Tooling</option>
-              <option>Tutorial</option>
-              <option>Experimental</option>
+            <label htmlFor="category">Category</label>
+            <select id="category" {...register("category")}>
+              {CategoryOptions.options.map((categoryOption) => (
+                <option key={categoryOption} value={categoryOption}>
+                  {categoryOption}
+                </option>
+              ))}
             </select>
+            {errors.category && (
+              <span className="validation-text">{errors.category.message}</span>
+            )}
           </div>
         </div>
 
@@ -224,12 +240,14 @@ const ApplicationDetailPage = () => {
           <Link to="/applications" className="secondary-btn">
             Cancel
           </Link>
-          <button
-            type="button"
-            className="secondary-btn-danger secondary-btn"
-            onClick={() => deleteApplicationByIdMutator(applicationId)}>
-            Delete
-          </button>
+          {!isNew(id) && (
+            <button
+              type="button"
+              className="secondary-btn-danger secondary-btn"
+              onClick={() => deleteApplicationByIdMutator(applicationId)}>
+              Delete
+            </button>
+          )}
         </div>
       </form>
     </div>
