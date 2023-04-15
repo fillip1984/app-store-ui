@@ -4,6 +4,8 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Nav from "./components/navigation/TopNav";
 import ApplicationDetail from "./pages/application/ApplicationDetailPage";
 import ApplicationList from "./pages/application/ApplicationListPage";
+import TagListPage from "./pages/tag/TagListPage";
+import TageDetailPage from "./pages/tag/TageDetailPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +26,8 @@ const App = () => {
             <Route path="/" element={<ApplicationList />} />
             <Route path="/applications" element={<ApplicationList />} />
             <Route path="/applications/:id" element={<ApplicationDetail />} />
+            <Route path="/tags" element={<TagListPage />} />
+            <Route path="/tags/:id" element={<TageDetailPage />} />
           </Routes>
         </Router>
       </div>

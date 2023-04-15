@@ -1,33 +1,30 @@
-import { DebounceInput } from "react-debounce-input";
-import ApplicationSummaryCard from "../../components/application/ApplicationSummaryCard";
+import { useQuery } from "@tanstack/react-query";
+import LoadingScreen from "../../components/navigation/LoadingScreen";
+import { readAllTags, tagKeys } from "../../services/TagServices";
 import { Link } from "react-router-dom";
 import { BsPlus } from "react-icons/bs";
-import { useQuery } from "@tanstack/react-query";
-import {
-  applicationKeys,
-  readAllApplications,
-} from "../../services/ApplicationServices";
-import LoadingScreen from "../../components/navigation/LoadingScreen";
+import { DebounceInput } from "react-debounce-input";
+import TagSummaryCard from "../../components/tag/TagSummaryCard";
 
-const ApplicationList = () => {
+const TagListPage = () => {
   const search = () => {
     console.log("searching");
   };
 
   const {
-    data: applicationSummaries,
+    data: tagSummaries,
     isError,
     isLoading,
     refetch,
-  } = useQuery(applicationKeys.lists(), () => readAllApplications());
+  } = useQuery(tagKeys.lists(), () => readAllTags());
 
   return (
     <div className="app-list container">
       <div className="title-bar sticky top-24 bg-slate-400 p-2">
         <div className="flex items-center gap-4">
-          <h2 className="text-white">Applications</h2>
+          <h2 className="text-white">Tags</h2>
           <Link
-            to="/applications/new"
+            to="/tags/new"
             className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-600 text-4xl text-white transition-colors duration-300 hover:bg-sky-500">
             <BsPlus />
           </Link>
@@ -35,7 +32,7 @@ const ApplicationList = () => {
         <DebounceInput
           onChange={search}
           className="my-2 w-full rounded"
-          placeholder="Search for applications"
+          placeholder="Search for tags"
           autoFocus
         />
       </div>
@@ -48,7 +45,7 @@ const ApplicationList = () => {
         />
       )}
 
-      {!isLoading && applicationSummaries?.length === 0 && (
+      {!isLoading && tagSummaries?.length === 0 && (
         <div className="my-24 flex items-center justify-center">
           <h4>No results found</h4>
         </div>
@@ -57,11 +54,8 @@ const ApplicationList = () => {
       {!isLoading && (
         <div id="app-container" className="grid gap-3 p-4 lg:grid-cols-2">
           <>
-            {applicationSummaries?.map((applicationSummary) => (
-              <ApplicationSummaryCard
-                key={applicationSummary.id}
-                applicationSummary={applicationSummary}
-              />
+            {tagSummaries?.map((tagSummary) => (
+              <TagSummaryCard key={tagSummary.id} tagSummary={tagSummary} />
             ))}
           </>
         </div>
@@ -70,4 +64,4 @@ const ApplicationList = () => {
   );
 };
 
-export default ApplicationList;
+export default TagListPage;

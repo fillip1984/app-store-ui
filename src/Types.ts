@@ -31,6 +31,17 @@ export type ApplicationSummary = z.infer<typeof ApplicationSummarySchema>;
 const ApplicationSchema = ApplicationSummarySchema;
 export type Application = z.infer<typeof ApplicationSchema>;
 
+export const TagSummarySchema = z
+  .object({
+    name: z.string().min(2).max(100),
+    description: z.string().min(10).max(500),
+  })
+  .merge(BaseSchema);
+export type TagSummary = z.infer<typeof TagSummarySchema>;
+
+const TagSchema = TagSummarySchema;
+export type Tag = z.infer<typeof TagSchema>;
+
 /// Utility functions
 export const isNew = (id: number | string | undefined) => {
   return id === "new";
