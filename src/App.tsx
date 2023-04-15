@@ -6,6 +6,7 @@ import ApplicationDetail from "./pages/application/ApplicationDetailPage";
 import ApplicationList from "./pages/application/ApplicationListPage";
 import TagListPage from "./pages/tag/TagListPage";
 import TageDetailPage from "./pages/tag/TageDetailPage";
+import AdminPage from "./pages/admin/AdminPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,7 @@ const App = () => {
             <Route path="/applications/:id" element={<ApplicationDetail />} />
             <Route path="/tags" element={<TagListPage />} />
             <Route path="/tags/:id" element={<TageDetailPage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Routes>
         </Router>
       </div>

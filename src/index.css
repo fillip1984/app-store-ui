@@ -3,7 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-  /* Heading customizations */
+  /************************************************************
+                      Heading customizations 
+  *************************************************************/
   h1 {
     @apply text-8xl;
   }
@@ -24,7 +26,10 @@
     @apply text-xl;
   }
 
-  /* Form input customizations */
+  /************************************************************
+                      Form input customizations 
+  *************************************************************/
+
   .input-group {
     @apply mt-4 flex flex-col;
   }
@@ -64,7 +69,10 @@
     @apply text-gray-400;
   }
 
-  /* Button customizations */
+  /************************************************************
+                      Button customizations 
+  *************************************************************/
+
   .primary-btn {
     @apply rounded bg-sky-500 px-4 py-2 text-2xl text-white;
   }
@@ -81,8 +89,15 @@
     @apply border-red-500 text-red-500;
   }
 
-  /* Layout customizations */
+  /************************************************************
+                      Layout customizations
+  *************************************************************/
+
   .container {
     @apply mb-24;
+  }
+
+  .card {
+    @apply rounded border px-4 py-2;
   }
 }

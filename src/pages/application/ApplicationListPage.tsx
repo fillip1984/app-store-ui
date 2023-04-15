@@ -18,6 +18,7 @@ const ApplicationList = () => {
     data: applicationSummaries,
     isError,
     isLoading,
+    isFetching,
     refetch,
   } = useQuery(applicationKeys.lists(), () => readAllApplications());
 
@@ -40,7 +41,7 @@ const ApplicationList = () => {
         />
       </div>
 
-      {(isLoading || isError) && (
+      {(isLoading || isFetching || isError) && (
         <LoadingScreen
           isLoading={isLoading}
           isError={isError}
@@ -48,13 +49,13 @@ const ApplicationList = () => {
         />
       )}
 
-      {!isLoading && applicationSummaries?.length === 0 && (
+      {!isLoading && !isFetching && applicationSummaries?.length === 0 && (
         <div className="my-24 flex items-center justify-center">
           <h4>No results found</h4>
         </div>
       )}
 
-      {!isLoading && (
+      {!isLoading && !isFetching && (
         <div id="app-container" className="grid gap-3 p-4 lg:grid-cols-2">
           <>
             {applicationSummaries?.map((applicationSummary) => (

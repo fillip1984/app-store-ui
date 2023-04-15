@@ -1,4 +1,8 @@
-import { BsFillGrid3X3GapFill, BsFillTagsFill } from "react-icons/bs";
+import {
+  BsFillGrid3X3GapFill,
+  BsFillTagsFill,
+  BsGearFill,
+} from "react-icons/bs";
 import { Link, useLocation } from "react-router-dom";
 
 const Nav = () => {
@@ -14,6 +18,11 @@ const Nav = () => {
       label: "Tags",
       icon: <BsFillTagsFill />,
       to: "/tags",
+    },
+    {
+      label: "Admin",
+      icon: <BsGearFill />,
+      to: "/admin",
     },
   ];
 

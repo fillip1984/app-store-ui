@@ -27,7 +27,7 @@ const ApplicationSummaryCard = ({
   return (
     <Link
       to={`/applications/${applicationSummary.id}`}
-      className="h-56 w-full rounded border bg-slate-50 p-2 transition duration-200 hover:shadow-md hover:shadow-sky-400"
+      className="card h-56 w-full bg-slate-50 transition duration-200 hover:shadow-md hover:shadow-sky-400"
       onMouseEnter={() => prefetch(applicationSummary.id)}>
       <div className="app-card flex h-full flex-col">
         <h3 className="app-card-title">{applicationSummary.name}</h3>
